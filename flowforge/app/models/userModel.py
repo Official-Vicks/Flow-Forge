@@ -34,5 +34,6 @@ class User(Base):
     )
 
     # Relationships (we’ll implement later)
-    tasks = relationship("Task", back_populates="assigned_user", cascade="all, delete")
-    activities = relationship("ActivityLog", back_populates="user", cascade="all, delete")
+    tasks = relationship("Task", back_populates="assignee", cascade="all, delete")
+    activities = relationship("Activity", back_populates="user", cascade="all, delete")
+    projects = relationship("Project", back_populates="owner")

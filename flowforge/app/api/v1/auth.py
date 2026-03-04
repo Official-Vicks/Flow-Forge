@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_db
 from app.models.userModel import User
 from app.schemas.userSchema import UserCreate, UserLogin, UserResponse, TokenResponse
-from app.crud.userCrud import get_user_by_email, create_user
+from app.crud import userCrud
 from app.core.security import (
     verify_password,
     create_access_token,
@@ -21,7 +21,7 @@ router = APIRouter()
 
 @router.post("/register", response_model=UserResponse, status_code=201)
 def register(user_in: UserCreate, db: Session = Depends(get_db)):
-    existing_user = get_user_by_email(db, user_in.email)
+    existing_user = userCrud.get_user_by_email(db, user_in.email)
 
     if existing_user:
         raise HTTPException(
@@ -29,7 +29,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
             detail="Email already registered"
         )
 
-    user = create_user(db, user_in)
+    user = userCrud.create_user(db, user_in)
     return user
 
 
@@ -39,7 +39,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 def login(user_in: UserLogin, db: Session = Depends(get_db)):
-    user = get_user_by_email(db, user_in.email)
+    user = userCrud.get_user_by_email(db, user_in.email)
 
     if not user or not verify_password(user_in.password, user.hashed_password):
         raise HTTPException(
