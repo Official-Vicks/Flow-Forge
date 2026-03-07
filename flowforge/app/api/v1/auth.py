@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_db
+from app.core.dependencies import get_db
 from app.models.userModel import User
 from app.schemas.userSchema import UserCreate, UserLogin, UserResponse, TokenResponse
 from app.crud import userCrud
@@ -11,6 +11,7 @@ from app.core.security import (
     create_refresh_token,
     decode_token
 )
+from app.services.activity_logger import log_activity
 
 router = APIRouter()
 
@@ -28,8 +29,19 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
+    
+    if user_in.role == "admin":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Forbidden. User can't register as admin"
+        )
 
     user = userCrud.create_user(db, user_in)
+    log_activity(
+        db=db,
+        action= f"Created user: {user.full_name}",
+        user_id= user.id
+    )
     return user
 
 
@@ -50,6 +62,11 @@ def login(user_in: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(subject=str(user.id))
     refresh_token = create_refresh_token(subject=str(user.id))
 
+    log_activity(
+        db=db,
+        action= f"User: {user.full_name} logged in",
+        user_id= user.id
+    )
     return TokenResponse(
         access_token=access_token,
         refresh_token=refresh_token

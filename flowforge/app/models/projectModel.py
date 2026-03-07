@@ -1,6 +1,6 @@
 # app/models/projectModel.py
 
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -14,13 +14,14 @@ class Project(Base):
 
     name = Column(String(225), nullable=False)
 
-    description = Column(String(225))
+    description = Column(Text)
 
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    created_by = Column(Integer, ForeignKey("users.id"))
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
-    owner = relationship("User", back_populates="projects")
+    owner = relationship("User", foreign_keys=[created_by],back_populates="projects")
     tasks = relationship("Task", back_populates="project")
     activities = relationship("Activity", back_populates="project")

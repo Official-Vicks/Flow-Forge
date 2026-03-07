@@ -33,7 +33,8 @@ class User(Base):
         onupdate=func.now()
     )
 
-    # Relationships (we’ll implement later)
-    tasks = relationship("Task", back_populates="assignee", cascade="all, delete")
-    activities = relationship("Activity", back_populates="user", cascade="all, delete")
-    projects = relationship("Project", back_populates="owner")
+    # Relationships
+    assigned_tasks = relationship("Task",foreign_keys="Task.assigned_to",back_populates="assignee")
+    created_tasks = relationship("Task",foreign_keys="Task.created_by",back_populates="creator")
+    activities = relationship("Activity", back_populates="user")
+    projects = relationship("Project", foreign_keys="Project.created_by",back_populates="owner")

@@ -1,22 +1,21 @@
-# app/models/taskModel.py
-
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
-from datetime import datetime
 from sqlalchemy.sql import func
 import enum
 
 from app.db.base import Base
 
-class taskStatus(str, enum.Enum):
-    todo = "Todo"
+
+class TaskStatus(str, enum.Enum):
+    todo = "todo"
     in_progress = "in_progress"
     done = "done"
 
-class priority(str, enum.Enum):
-    low = "Low"
-    medium = "Medium"
-    high = "High"
+
+class PriorityLevel(str, enum.Enum):
+    low = "low"
+    medium = "medium"
+    high = "high"
 
 
 class Task(Base):
@@ -27,15 +26,19 @@ class Task(Base):
     title = Column(String(225), nullable=False)
     description = Column(String(225))
 
-    status = Column(String(100), default=taskStatus.todo)  # todo | in_progress | done
-    priority = Column(String(100), default=priority.medium)  # low | medium | high
+    status = Column(Enum(TaskStatus), default=TaskStatus.todo)
+    priority = Column(Enum(PriorityLevel), default=PriorityLevel.medium)
 
     project_id = Column(Integer, ForeignKey("projects.id"))
-    assignee_id = Column(Integer, ForeignKey("users.id"))
+    created_by = Column(Integer, ForeignKey("users.id"))
+    assigned_to = Column(Integer, ForeignKey("users.id"))
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     # Relationships
     project = relationship("Project", back_populates="tasks")
-    assignee = relationship("User", back_populates="tasks")
+
+    assignee = relationship("User",foreign_keys=[assigned_to],back_populates="assigned_tasks")
+    creator = relationship("User",foreign_keys=[created_by],back_populates="created_tasks")
     activities = relationship("Activity", back_populates="task")

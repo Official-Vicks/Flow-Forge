@@ -17,7 +17,7 @@ class Activity(Base):
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=True)
     task_id = Column(Integer, ForeignKey("tasks.id"), nullable=True)
 
-    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships
     user = relationship("User", back_populates="activities")

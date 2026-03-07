@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from app.models.userModel import UserRole
+from typing import Optional
 
 
 # -----------------------------
@@ -20,6 +21,15 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
 
+# -----------------------------
+# Update User
+# -----------------------------
+class UserUpdate(BaseModel):
+    full_name: Optional[str]
+    email: Optional[EmailStr]
+
+class AdminUserUpdate(UserUpdate):
+    role: Optional[str]
 
 # -----------------------------
 # Login Schema
