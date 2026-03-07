@@ -1,159 +1,262 @@
-🚀 Flow Forge API
+# FlowForge 🚀
 
-Flow Forge is a backend API built with FastAPI, designed to simulate real-world backend development practices while strengthening my skills as a junior backend developer.
+FlowForge is a **role-based workflow management API** built with **FastAPI**.  
+It simulates the backend architecture of modern productivity tools like **Jira, Trello, or Asana**, focusing on clean architecture, authentication, permissions, and workflow tracking.
 
-This project focuses on:
+The project is designed as a **portfolio-ready backend system** that demonstrates real-world backend development practices.
 
-Clean architecture
+---
 
-Secure authentication
+## ✨ Features
 
-Scalable project structure
+### 🔐 Authentication System
 
-Production-ready backend patterns
+- JWT-based authentication
+- Access tokens and refresh tokens
+- Secure password hashing using **Passlib (bcrypt)**
+- Stateless authentication architecture
 
-Modular design for future frontend/mobile integration
+### 👥 User Management
 
-🧠 Project Goals
+- Role-based user system
+- Roles:
+  - `admin`
+  - `manager`
+  - `staff`
+- User creation and management
+- Secure password storage
 
-Flow Forge is not just another CRUD API.
+### 📁 Project Management
 
-It is designed to:
+- Create and manage projects
+- Each project belongs to a user
+- Projects can contain multiple tasks
+- Role-based visibility and access
 
-Improve my understanding of backend architecture
+### 📌 Task Management
 
-Implement JWT-based authentication securely
+- Tasks belong to projects
+- Tasks can be assigned to users
+- Status workflow:
+  - `todo`
+  - `in_progress`
+  - `done`
+- Priority levels:
+  - `low`
+  - `medium`
+  - `high`
 
-Apply best practices in API design
+### 📜 Activity Logging
 
-Practice writing maintainable and scalable Python code
+Automatic system logs for actions such as:
 
-Serve as a foundation for future full-stack integration
+- Project creation
+- Task creation
+- Task updates
+- Task assignments
 
-🏗️ Tech Stack
+This creates a **timeline history similar to Jira or Asana activity feeds**.
 
-Backend Framework: FastAPI
+### 🛡 Role-Based Permissions
 
-Language: Python
+Centralized permission layer controlling access to:
 
-Authentication: JWT
+- User management
+- Project creation
+- Task assignment
+- Workflow updates
 
-Password Hashing: Passlib (bcrypt)
+---
 
-Database: (PostgreSQL / SQLite)
+## 🏗 Architecture
 
-ORM: (SQLAlchemy)
-
-Environment Management: Python-dotenv
-
-API Documentation: Swagger UI (auto-generated)
-
-📂 Project Structure
-flow-forge/
+FlowForge follows a **modular and scalable backend structure**.
+app/
 │
-├── app/
-│   ├── api/
-│   ├── core/
-│   ├── models/
-│   ├── schemas/
-│   ├── services/
-│   ├── db/
-│   └── main.py
+├── api/
+│ └── v1/
+│ ├── auth.py
+│ ├── users.py
+│ ├── projects.py
+│ ├── tasks.py
+│ └── activities.py
 │
-├── .env
-├── requirements.txt
-└── README.md
+├── core/
+│ ├── config.py
+│ ├── security.py
+│ ├── dependencies.py
+│ ├── permissions.py
+│ └── activity_logger.py
+│
+├── crud/
+│ ├── userCrud.py
+│ ├── projectCrud.py
+│ ├── taskCrud.py
+│ └── activityCrud.py
+│
+├── db/
+│ ├── base.py
+│ ├── session.py
+│ └── init_db.py
+│
+├── models/
+│ ├── userModel.py
+│ ├── projectModel.py
+│ ├── taskModel.py
+│ └── activityModel.py
+│
+├── schemas/
+│ ├── userSchema.py
+│ ├── projectSchema.py
+│ ├── taskSchema.py
+│ └── activitySchema.py
+│
+└── main.py
 
-The structure follows a modular design to keep responsibilities separated and maintainable.
+This structure separates:
 
-🔐 Authentication System
+- **Data models**
+- **Business logic**
+- **API routes**
+- **Core services**
 
-Flow Forge implements:
+---
 
-Secure password hashing using bcrypt
+## 🧠 Workflow Model
 
-JWT access token generation
+The system follows a hierarchical workflow:
+User
+└── Project
+└── Task
+└── Activity Log
 
-Token validation middleware
+### Role Permissions
 
-Protected routes with dependency injection
+| Role    | Permissions               |
+| ------- | ------------------------- |
+| Admin   | Full system access        |
+| Manager | Create projects and tasks |
+| Staff   | Work on assigned tasks    |
 
-Security logic is structured in the core/security.py module.
+---
 
-🚧 Current Features
+## 🛠 Tech Stack
 
-User registration
+- **FastAPI** – Web framework
+- **SQLAlchemy** – ORM
+- **PostgreSQL / SQLite** – Database
+- **Pydantic** – Data validation
+- **JWT** – Authentication
+- **Passlib (bcrypt)** – Password hashing
 
-User login
+---
 
-JWT authentication
+## 📌 Example API Endpoints
 
-Protected routes
+### Authentication
 
-Role-based logic (if applicable)
+POST /auth/register
+POST /auth/login
+POST /auth/refresh
 
-🔮 Planned Improvements
+### Users
 
-Refresh tokens
+GET /users
+GET /users/{id}
+PATCH /users/{id}
+DELETE /users/{id}
 
-Role-based access control (RBAC)
+### Projects
 
-Logging system
+POST /projects
+GET /projects
+GET /projects/{id}
+PATCH /projects/{id}
+DELETE /projects/{id}
 
-Pagination utilities
+### Tasks
 
-Rate limiting
+POST /tasks
+GET /tasks
+PATCH /tasks/{id}
+DELETE /tasks/{id}
 
-Dockerization
+### Activities
 
-CI/CD setup
+GET /activities/projects/{project_id}
+GET /activities/tasks/{task_id}
 
-Deployment (Render / Railway / etc.)
+---
 
-▶️ How to Run the Project
-1️⃣ Clone the repository
-git clone https://github.com/your-username/flow-forge.git
-cd flow-forge
-2️⃣ Create virtual environment
+## 🚀 Running the Project
+
+### 1️⃣ Clone the repository
+
+git clone https://github.com/yourusername/flowforge.git
+
+cd flowforge
+
+### 2️⃣ Create virtual environment
+
 python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
-3️⃣ Install dependencies
-pip install -r requirements.txt
-4️⃣ Set up environment variables
+source venv/bin/activate
 
-Create a .env file:
+Windows:
+
+venv\Scripts\activate
+
+### 3️⃣ Install dependencies
+
+pip install -r requirements.txt
+
+### 4️⃣ Configure environment variables
+
+Create `.env`
 
 SECRET_KEY=your_secret_key
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
-DATABASE_URL=your_database_url
-5️⃣ Run the server
+
+### 5️⃣ Run the server
+
 uvicorn app.main:app --reload
 
-Visit:
+---
+
+## 📖 API Documentation
+
+FastAPI automatically generates interactive docs.
+
+Swagger UI:
 
 http://127.0.0.1:8000/docs
-📘 API Documentation
 
-FastAPI automatically generates:
+Redoc:
 
-Swagger UI → /docs
+http://127.0.0.1:8000/redoc
 
-ReDoc → /redoc
+---
 
-💡 Why This Project Matters
+## 📈 Future Improvements
 
-This project represents my commitment to becoming a strong backend developer by:
+Planned enhancements include:
 
-Writing clean, structured Python code
+- Pagination & filtering
+- Advanced RBAC policies
+- Task assignment endpoints
+- Email notifications
+- Docker containerization
+- Background job processing
+- WebSocket activity updates
 
-Following secure authentication practices
+---
 
-Building production-minded APIs
+## 🎯 Purpose of This Project
 
-Continuously improving through refactoring
+FlowForge was built to demonstrate **real backend engineering practices**, including:
 
-👨‍💻 Author
-
-Built by Chidiebere Victory
-Aspiring Backend Developer focused on Python & FastAPI.
+- modular architecture
+- authentication systems
+- role-based permissions
+- workflow modeling
+- activity tracking
